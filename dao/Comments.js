@@ -1,28 +1,30 @@
 const dao = require('./base');
 class Comments {
-    constructor({id, announcement_id, owner}) {
-        this.id = id;
-        this.announcement_id = announcement_id;
-        this.owner = owner;
-
-    }
-    printComment() {
-        console.log('Name : ', this.announcement_id);
-        console.log('Country : ', this.owner);
+    constructor({ann_id, owner_name, like_count, dislike_count, status, timestamp}) {
+        this.ann_id = ann_id;
+        this.owner_name = owner_name;
+        this.like_count = like_count;
+        this.dislike_count = dislike_count;
+        this.status = status;
+        this.timestamp = timestamp;
     }
 }
 
 class CommentsDao {
     /**
      * Create comments
-     * @param announcement_id
-     * @param owner
+     * @param ann_id
+     * @param owner_name
+     * @param status
+     * @param timestamp
      * @return {Promise<*>}
      */
-    static async create({ announcement_id, owner}) {
+    static async create({ ann_id, owner_name }) {
+        const status = "approved";
+        const timestamp = parseInt((new Date()).getTime() / 1000);
         return await dao.knex
-            .insert({ announcement_id, owner })
-            .from('Comments')
+            .insert({ ann_id, owner_name, status, timestamp })
+            .from('comments')
     }
 
     /**
@@ -32,7 +34,7 @@ class CommentsDao {
     static async getList() {
         const comment_arr = await dao.knex
             .select()
-            .from('Comments');
+            .from('comments');
         return comment_arr.map(comment => new Comments(comment));
     }
 
@@ -44,7 +46,7 @@ class CommentsDao {
     static async getById(id) {
         const data = await dao.knex
             .select()
-            .from('Comments')
+            .from('comments')
             .where({ id })
             .first();
         return new Comments(data);
@@ -57,9 +59,9 @@ class CommentsDao {
      * @param announcement_id
      * @return {Promise<*>}
      */
-    static async update(id, { announcement_id, owner}) {
+    static async update(id, { ann_id, owner_name, status, timestamp}) {
         return dao.knex
-            .update({ announcement_id, owner })
+            .update({ ann_id, owner_name,status, timestamp })
             .from('Comments')
             .where({ id })
     }
@@ -71,40 +73,43 @@ class CommentsDao {
      */
     static async delete(id) {
         return dao.knex
-            .from('Comments')
+            .from('comments')
             .where({ id })
             .del();
     }
 
-    static async unlike(id){
-        let comment;
-        this.getById(id).then((comment)=>{
-            ++comment.unlike_count;
-            this.comment = comment;
 
+    static async like(id){
+        const comment = await dao.knex
+            .select()
+            .from('comments')
+            .where({ id })
+            .first();
 
-        })
+        ++comment.like_count;
+
         return dao.knex
-            .update(this.comment.id, {this.comment.announcement_id, this.comment.owner, this.comment.unlike_count};
-            .from('Comments')
+            .update({ like_count: comment.like_count})
+            .from('comments')
             .where({ id })
     }
 
-    static async like(id){
-        let comment;
-        this.getById(id).then((comment)=>{
-            ++comment.like_count;
-            this.comment = comment;
+    static async dislike(id){
+        const comment = await dao.knex
+            .select()
+            .from('comments')
+            .where({ id })
+            .first();
 
+        ++comment.dislike_count;
 
-        })
         return dao.knex
-            .update(this.comment.id, {this.comment.announcement_id, this.comment.owner, this.comment.like_count});
-    .from('Comments')
+            .update({ dislike_count: comment.dislike_count})
+            .from('comments')
             .where({ id })
     }
 
 
 }
 
-module.exports = CommentsDaoDao;
+module.exports = CommentsDao;
