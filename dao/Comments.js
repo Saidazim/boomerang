@@ -1,31 +1,110 @@
 const dao = require('./base');
+class Comments {
+    constructor({id, announcement_id, owner}) {
+        this.id = id;
+        this.announcement_id = announcement_id;
+        this.owner = owner;
 
-class Commentsdao {
+    }
+    printComment() {
+        console.log('Name : ', this.announcement_id);
+        console.log('Country : ', this.owner);
+    }
+}
 
-    static async CreateComment({announcement_id, owner}){
-        return dao.knex.insert({announcement_id, owner}).from('Comments');
+class CommentsDao {
+    /**
+     * Create comments
+     * @param announcement_id
+     * @param owner
+     * @return {Promise<*>}
+     */
+    static async create({ announcement_id, owner}) {
+        return await dao.knex
+            .insert({ announcement_id, owner })
+            .from('Comments')
     }
 
-    static async GetComment(){
-        return dao.knex.select().from('Comments');
+    /**
+     * Get list
+     * @return {Promise<*>}
+     */
+    static async getList() {
+        const comment_arr = await dao.knex
+            .select()
+            .from('Comments');
+        return comment_arr.map(comment => new Comments(comment));
     }
 
-    static async UpdateComment(id,{announcement_id, owner}){
-        return dao.knex.update({announcement_id, owner}).from('Comments').where({id:id});
+    /**
+     * Get comment by id
+     * @param id
+     * @return {Promise<*>}
+     */
+    static async getById(id) {
+        const data = await dao.knex
+            .select()
+            .from('Comments')
+            .where({ id })
+            .first();
+        return new Comments(data);
     }
 
-    static async DeleteComment(id){
-        return dao.knex.delete().from('Comments').where({id:id});
+    /**
+     * Update comment by id
+     * @param id
+     * @param owner
+     * @param announcement_id
+     * @return {Promise<*>}
+     */
+    static async update(id, { announcement_id, owner}) {
+        return dao.knex
+            .update({ announcement_id, owner })
+            .from('Comments')
+            .where({ id })
     }
 
-    static async unlike(id, {unlike_count}){
-        return dao.knex.update({unlike_count:unlike_count+1}).where({id:id});
+    /**
+     * Delete comment  by id
+     * @param id
+     * @return {Promise<*>}
+     */
+    static async delete(id) {
+        return dao.knex
+            .from('Comments')
+            .where({ id })
+            .del();
     }
 
-    static async like(id, {like_count}){
-        return dao.knex.update({unlike_count: unlike_count-1}).where({id:id});
+    static async unlike(id){
+        let comment;
+        this.getById(id).then((comment)=>{
+            ++comment.unlike_count;
+            this.comment = comment;
+
+
+        })
+        return dao.knex
+            .update(this.comment.id, {this.comment.announcement_id, this.comment.owner, this.comment.unlike_count};
+            .from('Comments')
+            .where({ id })
     }
+
+    static async like(id){
+        let comment;
+        this.getById(id).then((comment)=>{
+            ++comment.like_count;
+            this.comment = comment;
+
+
+        })
+        return dao.knex
+            .update(this.comment.id, {this.comment.announcement_id, this.comment.owner, this.comment.like_count});
+    .from('Comments')
+            .where({ id })
+    }
+
 
 }
 
-module.exports = Commentsdao;
+module.exports = CommentsDaoDao;
