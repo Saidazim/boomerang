@@ -4,12 +4,11 @@ const Announcement = require('./Announcement');
 class AnnouncementDao {
     /**
      * Create person
-     * @param id
      * @param title
      * @param text
      * @param owner
      * @param owner_tel
-     * @param view_count
+     * @param count_views
      * @param region
      * @param country
      * @param img_url
@@ -18,9 +17,9 @@ class AnnouncementDao {
      * @param date_time
      * @return {Promise<*>}
      */
-    static async create({id, title, text, owner, owner_tel, view_count, region, country, img_url, status, due_date, date_time}) {
+    static async create({  title, text, owner, status, owner_phone, img_url, region, country, count_views, due_date }) {
       return await dao.knex
-        .insert({id, title, text, owner, owner_tel, view_count, region, country, img_url, status, due_date, date_time})
+        .insert( {title, text, owner, status, owner_phone, img_url, region, country, count_views, due_date} )
         .from('announcement')
     }
   
@@ -49,12 +48,12 @@ class AnnouncementDao {
       return new Announcement(data);
     }
 
-    /**
-     * Get announcement by title
-     * @param title
-     * @returns {Promise<*>}
-     */
-    static async getById(title) {
+    // /**
+    //  * Get announcement by title
+    //  * @param title
+    //  * @returns {Promise<*>}
+    //  */
+    static async getByTitle(title) {
         const data = await dao.knex
           .select()
           .from('announcement')
@@ -71,7 +70,7 @@ class AnnouncementDao {
      * @param text
      * @param owner
      * @param owner_tel
-     * @param view_count
+     * @param count_views
      * @param region
      * @param country
      * @param img_url
@@ -79,9 +78,9 @@ class AnnouncementDao {
      * @param due_date
      * @return {Promise<*>}
      */
-    static async update(id, { title, text, owner, owner_tel, view_count, region, country, img_url, status, due_date, date_time}) {
+    static async update(id, { title, text, owner, owner_tel, count_views, region, country, img_url, status, due_date, date_time}) {
       return dao.knex
-        .update({ title, text, owner, owner_tel, view_count, region, country, img_url, status, due_date, date_time})
+        .update({ title, text, owner, owner_tel, count_views, region, country, img_url, status, due_date, date_time})
         .from('announcement')
         .where({ id })
     }
