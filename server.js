@@ -8,11 +8,10 @@ const server = jayson.Server({
     getListAnn: async () => await annDao.getList(),
     updateAnn: async () => await annDao.update(id, title, text, owner, owner_phone, counts_view, region, country, img_url, status, due_date, created_at),
     deleteAnn: async () => await annDao.delete(id),
-        // getByTitle: async (id) => {
-        // let toUpdate = await annDao.getByTitle(title).count_views + 1;
-        // await annDao.update(title, toUpdate);
-        // return annDao.getByTitle()}
-    // update: async
+    getByIdAnn: async (id) => {
+        let toUpdate = await annDao.getById(id).count_views + 1;
+        await annDao.update(id, toUpdate);
+        return annDao.getById(id)}
 });
 
 server.http().listen(3000);
