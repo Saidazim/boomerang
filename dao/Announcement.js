@@ -1,19 +1,17 @@
 class Announcement {
-    constructor({id, title, text, owner, owner_tel, view_count, region, country, img_url, status, due_date, date_time}){
-        this.id = id;
+    constructor({ title, text, owner, status, owner_phone, img_url, region, country, count_views, due_date, created_at }) {
+        this.title = title;
         this.text = text;
         this.owner = owner;
-        this.owner_tel = owner_tel;
-        this.view = view;
-        this.view_count = view_count;
+        this.status = status;
+        this.owner_phone = owner_phone;
+        this.img_url = img_url;
         this.region = region;
         this.country = country;
-        this.img_url = img_url;
-        this.status = status;
+        this.count_views = count_views;
         this.due_date = due_date;
-        this.date_time = date_time;
+        this.created_at = created_at;
     }
-
 }
 
 module.exports = Announcement;
